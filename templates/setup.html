@@ -1,0 +1,133 @@
+
+<section id="size" class="row">
+<h1 class="text-center"><span class="glyphicon glyphicon-ok"></span>  How does SPA Blogger stack up?</h1>
+
+<h5 ><strong>Average website</strong> - "1,935Kb — just shy of 2Mb (or 2,048 Kb) per page. This includes an average of 95 HTTP pull"</h5>
+
+<h5><strong>WordPress</strong> - "5,000kb+, 150+ average HTTP requests.</h5>
+
+
+<h5><strong>SPA Blogger</strong> - 995kb, 42 HTTP Requests including AJAX calls.</h5>
+</section>
+
+
+<section id="setup" class="row setup">
+	<div class="col-md-6">
+		<h1 class="text-center">1.</h1>
+		<h5 class="text-center">Setup your file structure</h5>
+		<ul>
+			<li>The two requirements are a "templates" and "categories" folder at your root.</li>
+			<ul>
+				<li>The categories folder can contain any category you want. Events, news, etc.</li>
+				<li>The templates folder will contain our .html files that represent sections of the website.</li>
+				<ul>
+					<li>In the templates you will need an archives.html, post.html and list.html</li>
+					<li>The blogger tool will look for those files, so I recommend adding even blank ones when getting started.</li>
+				</ul>
+			</ul>
+		</ul>
+	</div>
+	<div class="col-md-6">
+		<img src="../images/file-struct.png"/>
+	</div>
+</section>
+
+<section id="setup2" class="row setup">
+	<div class="col-md-6">
+		<img src="../images/add-scripts.png"/>	
+	</div>
+	<div class="col-md-6">
+		<h1 class="text-center">2.</h1>
+		<h5 class="text-center">Add the required JavaScript files</h5>
+		<div class="center-block links">
+			<a class="text-center" href="https://github.com/jeremyroelfs/jr-simple-blogger/blob/master/js/lib/jrSimpleBlogger.js">jrSPABlogger</a><br/>
+			<a class="text-center" href="https://github.com/jeremyroelfs/jr-simple-blogger/blob/master/js/lib/showdown.js">showdown.js</a>
+		</div>
+	</div>
+</section>
+
+<section id="setup3" class="row setup">
+	<div class="col-md-6">
+		<h1 class="text-center">3.</h1>
+		<h5 class="text-center">Add the custom tags to your html</h5>
+		<ul>
+			<li>template - accesses a template to be rendered<br/>
+			<ul>
+				<li>link attribute - tells the template engine which template file we want to render</li>
+			</ul>
+			<li>post - our default view for posts</li>
+			<ul>
+				<li>template attribute - the template we will use for the post view</li>
+			</ul>
+			<li>archive - our default view for archives</li>
+			<ul>
+				<li>template attribute - the template we will use for archive view</li>
+			</ul>
+		</ul>
+	</div>
+	<div class="col-md-6">
+		<img src="../images/tags.png"/>
+	</div>
+</section>
+
+<section id="setup4" class="row setup">
+	<div class="col-md-6">
+		<img src="../images/list.png"/>
+	</div>
+	<div class="col-md-6">
+		<h1 class="text-center">4.</h1>
+		<h5 class="text-center">Add the List tag where you need to view a list</h5>
+		<ul>
+			<ul>
+				<li>template attribute - the template file we will use to view each individual list item</li>
+			
+				<li>category attribute- the category we want the posts display from</li>
+			
+				<li>limit attribute - the number of posts we want displayed at one time in this list. If blank or 0, it will display all the returned posts from the category</li>
+			
+			</ul>
+		</ul>
+	</div>
+</section>
+
+<section id="setup5" class="row setup">
+	<div class="col-md-6">
+		<h1 class="text-center">5.</h1>
+		<h5 class="text-center">Writting Posts</h5>
+		<ul>
+			<li>Make sure you have your posts in this structure<br/>
+			<ul>
+				<li>Category folder</li>
+				<li>index.md</li>
+				<li>Media that goes along with post. You can use links</li>
+				<li>Featured Image. The image along with the index.md is the featured image.</li>
+			</ul>
+			
+		</ul>
+	</div>
+	<div class="col-md-6">
+		<img src="../images/post-struct.png"/>
+	</div>
+</section>
+
+<section class="row setup">
+	<div class="col-md-6">
+		<img src="../images/metadata.png"/>
+	</div>
+	<div class="col-md-6">
+		<h5 class="text-center">Metadata and Post Body</h5>
+		<ul>
+			<ul>
+				<li>template attribute - the template file we will use to view each individual list item</li>
+				<li>category attribute- the category we want the posts display from</li>
+				<li>limit attribute - the number of posts we want displayed at one time in this list. If blank or 0, it will display all the returned posts from the category</li>
+			</ul>
+			<ul>
+				<li>In the post body you can use markdown and/or html. The only catch is. If you index.html has markdown. It will not be parsed as markdown. So I recommend .md and then you have the freedom to utilize both html and markdown.</li>
+				<li>Valid file types are: .html, .md, .markdown<ul>
+			</ul>
+		</ul>
+	</div>
+</section>
+
+
