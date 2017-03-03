@@ -1,10 +1,31 @@
 /* NAMESPACE - ALL OF OUR BLOG RELATED SETUP OPTIONS AND TEMPLATING GO IN THIS FUNCTION*/
-function jrSPABlogger(){
+function jrSPABlogger(definitions){
 
-	/*Define our environmental variables*/
+	/*Define our default environmental variables*/
 	var envVars = {
-		rootFolder : "/categories/",
+			rootBase : "rootBaseStuff",
+			rootCategoriesFolder : "/categories/",
+			rootTemplateFolder : "templates/",
+			relLinkDefault : ""// this is in reference to directory structure linking. it can be . or .. or ../ dependent on the way your website is structured
+		}
+
+	if(definitions != undefined && definitions != null){
+		//Replace based on user variables
+		if(definitions.rootBase != null && definitions.rootBase != undefined){
+			envVars.rootBase = definitions.rootBase;
+		}
+		if(definitions.rootCategoriesFolder != null && definitions.rootCategoriesFolder != undefined){
+			envVars.rootCategoriesFolder = definitions.rootCategoriesFolder;
+
+		}
+		if(definitions.rootTemplateFolder != null && definitions.rootTemplateFolder != undefined){
+			envVars.rootTemplateFolder = definitions.rootTemplateFolder;
+		}
+		if(definitions.relLinkDefault != null && definitions.relLinkDefault != undefined){
+			envVars.relLinkDefault = definitions.relLinkDefault;
+		}
 	}
+		
 
 
 //-----------------------------------------------
@@ -44,7 +65,9 @@ function jrSPABlogger(){
 		
 		ourNodeToBuildOn.first().attr('link', function(){
 			
-			var templateLink = "/templates/" + $(this).attr('link');
+			var templateLink = envVars.relLinkDefault + envVars.rootBase + envVars.rootTemplateFolder + $(this).attr('link');
+			//console.log("GET: line68 : ", templateLink);
+
 			$.ajax({
 				method: "GET",
 				url: templateLink,
@@ -73,7 +96,7 @@ function jrSPABlogger(){
 	
 	//Simply gets the template from our template folder. Use with deferred.
 	function getTemplate(template){
-		var templateLink = /templates/ + template;
+		var templateLink = envVars.relLinkDefault + envVars.rootBase + envVars.rootTemplateFolder + template;
 		return $.ajax({
 			method: "GET",
 			url: templateLink,
@@ -114,6 +137,8 @@ function jrSPABlogger(){
 
 
 
+
+
 //---------------------------------------
 	//BEGIN STATIC CONTENT
 	/*
@@ -128,13 +153,16 @@ function jrSPABlogger(){
 		is not working yet
 	*/
 	function getCategoryContents(categoryDOMList){
+		
+
 		var deferreds = [];//Array of each ajax call for our categories
 		$.each(categoryDOMList, function(index, cat){
+			console.log("CAT: ", cat, index);
 		    deferreds.push(
 		        //**Important - Do not use a success handler - don't want to trigger the deferred object
 		        $.ajax({
 		            method: "GET",
-		            url: cat
+		            url: "." + cat
 		        })
 		    );
 		});
@@ -149,6 +177,7 @@ function jrSPABlogger(){
 			    the scope of this function (callback in our case)
 			    */
 			    results = [];
+
 			    for(var arg in arguments){
 			    	results.push(arguments[arg[0]]);
 			    }
@@ -162,11 +191,11 @@ function jrSPABlogger(){
 					//Then push them to an array
 		    		//Store them in here
 		        	$(results[html]).find("a").attr("href", function (i, val) {
-		        		
 		        		//remove hrefs that don't apply to our blog
-		        		if(val.indexOf('../') !== -1 || val.indexOf('node-ecstatic') !== -1){
+		        		if(val.indexOf('../') !== -1 || val.indexOf('node-ecstatic') !== -1  || val.indexOf('DS_store') !== -1){
 		        			//do not add to our array
 		        		} else {
+		        			console.log("line 199: push: ", val);
 		        			postDOMList.push(val);
 		        		}
 		        	});
@@ -192,12 +221,12 @@ function jrSPABlogger(){
 	function getPostData(postDOMList){
 		var deferreds = [];//Array of each ajax call for our categories
 		$.each(postDOMList, function(index, cat){
+			//console.log("Cat: ", cat); //#223
 			deferreds.push(
 		        // **Important - again no success handler - don't want to trigger the deferred object
 		        $.ajax({
 		            method: "GET",
 		            url: cat + "index.md"
-
 		        })
 		    );
 		});
@@ -282,6 +311,7 @@ function jrSPABlogger(){
 
 		ourNodeToBuildOn.empty();//Clear our the node(s)
 		ourNodeToBuildOn.each(function( index ){
+			//Get our specs from our tag attributes
 			var parentEl = $(this);
 			var category = parentEl.attr('category');
 			var limit = parentEl.attr('limit');
@@ -291,11 +321,12 @@ function jrSPABlogger(){
 			var catArray = [];
 			var subArray = category.split(",");
 			for(var cat in subArray){
-				catArray.push(envVars.rootFolder + subArray[cat] + "/");
+				console.log(subArray[cat]);
+				catArray.push( envVars.relLinkDefault + envVars.rootBase + envVars.rootCategoriesFolder + subArray[cat] + "/");
 			}
-
+				console.log("cat array 326: ", catArray);
 			$.when( 
-				getCategoryContents( catArray ),
+				getCategoryContents( catArray ), //To Line 155
 				getTemplate( template )
 			).then(function( ) {
 				
@@ -305,9 +336,14 @@ function jrSPABlogger(){
 				}
 				var myTemplate = results[1][0].toString();//Make sure we have a string to avoid frag errors
 				var myPostUrls = results[0];
+				//var myPostUrls = catArray;
+				
+				
+				
 
 				//Get our post data from the returned strings
 			    getPostData( myPostUrls ).then(function( data ){
+
 			    	var postContainer = parseMd(data);//returns data array of posts
 
 			    	if(postContainer.length < limit){
@@ -498,7 +534,11 @@ function jrSPABlogger(){
 
 
 window.onload = function(){
-	jrSPABlogger(); 
+	var definitions = {
+			rootBase : "",
+			relLinkDefault : ""// this is in reference to directory structure linking. it can be . or .. or ../ dependent on the way your website is structured
+	}
+	jrSPABlogger(definitions);
 };//End ready
 
 

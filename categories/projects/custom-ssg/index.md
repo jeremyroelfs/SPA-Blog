@@ -9,9 +9,6 @@ description: Code for Fort Collins will soon have their own custom Static Site C
 
 # Static Site Generator
 
-##Yeah, we have a custom static site generator... oh the joy!
+##Custom static site generator.
 
 ![Image of matrix](https://i.ytimg.com/vi/kqUR3KtWbTk/maxresdefault.jpg)
-
-
-Weeeeeeeeeeeeeeee!!!!!!!!
