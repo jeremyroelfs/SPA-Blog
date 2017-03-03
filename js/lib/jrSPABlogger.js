@@ -67,6 +67,7 @@ function jrSPABlogger(definitions){
 			
 			var templateLink = envVars.relLinkDefault + envVars.rootBase + envVars.rootTemplateFolder + $(this).attr('link');
 			//console.log("GET: line68 : ", templateLink);
+			console.log("Line 70: ", templateLink);
 
 			$.ajax({
 				method: "GET",
@@ -152,12 +153,11 @@ function jrSPABlogger(definitions){
 		**TODO: you should be able to list multiple categories but it
 		is not working yet
 	*/
-	function getCategoryContents(categoryDOMList){
-		
+	function getCategoryContents(categoryDOMList){//Called from line 328 categoryDOMList = catArray
 
 		var deferreds = [];//Array of each ajax call for our categories
 		$.each(categoryDOMList, function(index, cat){
-			console.log("CAT: ", cat, index);
+			console.log("159: " , cat);
 		    deferreds.push(
 		        //**Important - Do not use a success handler - don't want to trigger the deferred object
 		        $.ajax({
@@ -167,6 +167,7 @@ function jrSPABlogger(definitions){
 		    );
 		});
 		
+
 		// Can't pass a literal array, so use apply.
 		return $.when.apply($, deferreds).then(
 			function(){
@@ -176,12 +177,12 @@ function jrSPABlogger(definitions){
 			    Arguments is a keyword as in arguments to 
 			    the scope of this function (callback in our case)
 			    */
-			    results = [];
 
+			    results = []; //tempVar for arguments
 			    for(var arg in arguments){
 			    	results.push(arguments[arg[0]]);
 			    }
-
+			    console.log("184: ", results[0]);
 
 			    //assign the hrefs to our postDOMlist
 				var postDOMList = [];
@@ -192,16 +193,32 @@ function jrSPABlogger(definitions){
 		    		//Store them in here
 		        	$(results[html]).find("a").attr("href", function (i, val) {
 		        		//remove hrefs that don't apply to our blog
-		        		if(val.indexOf('../') !== -1 || val.indexOf('node-ecstatic') !== -1  || val.indexOf('DS_store') !== -1){
+		        		//This was throwing errors
+		        		//TODO: find a better way to parse
+		        		console.log("Val 197: ", val);
+
+		        		if(val.indexOf('../') !== -1){
+							//do not add
+						} else if( val.indexOf('./') !== -1){
+							//do not add
+		        		} else if(val.indexOf('node-ecstatic') !== -1){
+							//do not add
+		        		} else if(val.indexOf('DS') !== -1){
+		        			console.log("Yes", val);
 		        			//do not add to our array
+		        		} else if(val.indexOf('Parent Directory') !== -1) {//Has to be the "Parent Directory"
+		        			//do not add
 		        		} else {
-		        			console.log("line 199: push: ", val);
+		        			if(val.indexOf(envVars.rootCategoriesFolder) == -1){
+		        				var tempVal = envVars.relLinkDefault + envVars.rootBase + envVars.rootCategoriesFolder + val;
+		        				val = tempVal;
+		        			}
 		        			postDOMList.push(val);
 		        		}
 		        	});
 		        }
-
-		        //Get rid of spaces and replace with dash
+		        console.log("line 202: ", postDOMList);
+		        //Check for naming conventions
 		        for(var i in postDOMList){
 		        	//var newUrl = postDOMList[i].replace(/%20/g, "-");
 		        	
@@ -211,17 +228,17 @@ function jrSPABlogger(definitions){
 
 		        }
 
-		        return postDOMList;
+		        return postDOMList; //Return to line 328
 
 		})
 	};//End function
 				    	
 
 	//get our post data from our file and return the results
-	function getPostData(postDOMList){
+	function getPostData(postDOMList){ //#334
 		var deferreds = [];//Array of each ajax call for our categories
 		$.each(postDOMList, function(index, cat){
-			//console.log("Cat: ", cat); //#223
+			console.log("Cat line 223: ", cat); //#223
 			deferreds.push(
 		        // **Important - again no success handler - don't want to trigger the deferred object
 		        $.ajax({
@@ -320,11 +337,13 @@ function jrSPABlogger(definitions){
 			
 			var catArray = [];
 			var subArray = category.split(",");
+
+			//console.log("322:", subArray);
 			for(var cat in subArray){
-				console.log(subArray[cat]);
+			//	console.log("324 : ", envVars.relLinkDefault + envVars.rootBase + envVars.rootCategoriesFolder + subArray[cat] + "/");
 				catArray.push( envVars.relLinkDefault + envVars.rootBase + envVars.rootCategoriesFolder + subArray[cat] + "/");
 			}
-				console.log("cat array 326: ", catArray);
+
 			$.when( 
 				getCategoryContents( catArray ), //To Line 155
 				getTemplate( template )
@@ -334,11 +353,11 @@ function jrSPABlogger(definitions){
 				for(var arg in arguments){
 				   	results.push(arguments[arg]);
 				}
+
+				//Grab our data from the deferred
 				var myTemplate = results[1][0].toString();//Make sure we have a string to avoid frag errors
-				var myPostUrls = results[0];
-				//var myPostUrls = catArray;
-				
-				
+				var myPostUrls = results[0]; //is the equivalent of postDOMList in getCategoryContents
+				console.log("Line 342 : " , myPostUrls);
 				
 
 				//Get our post data from the returned strings
